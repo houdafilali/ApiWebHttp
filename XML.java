@@ -24,26 +24,35 @@ public class XML {
     public XML(final String c){
         cheminFichier=c;
     }
-    public void lireFichier() throws ParserConfigurationException, SAXException, IOException
-    {
-        
-      
-       //obtenir un parseur DOM  pour traiter le fichier XML
-       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-       //onstruire un objet Document représentant le contenu du fichier XML.
-       DocumentBuilder builder = factory.newDocumentBuilder();
-       //analyser le fichier XML et retourne un objet Document. Cet objet Document représente la structure et le contenu du fichier XML
-       Document document = builder.parse(new File(cheminFichier));
-       // Récupération du contenu de la balise <import>
-       NodeList importList = document.getElementsByTagName("import");
-       if (importList.getLength() > 0) {
-           Element importElement = (Element) importList.item(0);
-           String importContent = importElement.getTextContent();
-           // Affichage du contenu de la balise <import>
-           System.out.println("Contenu de la balise <import> : " + importContent);
-            } else {
-                System.out.println("Aucune balise <import> trouvée dans le fichier XML.");
+   public double[][][] lireFichierXML() throws ParserConfigurationException, SAXException, IOException {
+
+        // Creer un objet DocumentBuilderFactory
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        // Creer un objet DocumentBuilder
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        // Charger le fichier XML
+        Document document = builder.parse(new File(cheminFichier));
+        // Obtenir les éléments <Matrix>
+        NodeList matrixList = document.getElementsByTagName("Matrix");
+        int nombreDonnees = matrixList.getLength();
+        // Stocker les valeurs de la matrice dans un tab
+        double[][][] matrices = new double[nombreDonnees][5000][1];
+        // Parcourir les matrices
+        for (int i = 0; i < nombreDonnees; i++) {
+            Element matrixElement = (Element) matrixList.item(i);
+
+
+            NodeList rowList = matrixElement.getElementsByTagName("Row");
+            for (int j = 0; j < rowList.getLength(); j++) {
+                Element rowElement = (Element) rowList.item(j);
+                String value = rowElement.getTextContent();
+                double floatValue = Double.parseDouble(value);
+                matrices[i][j][0] = floatValue;
             }
-    }   
+
+        }
+        return matrices;
+
+    }  
     
 }
