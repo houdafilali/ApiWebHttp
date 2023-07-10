@@ -24,7 +24,7 @@ public class XML {
     public XML(final String c){
         cheminFichier=c;
     }
-   public double[][][] lireFichierXML() throws ParserConfigurationException, SAXException, IOException {
+    public double[][][] lireFichierXML() throws ParserConfigurationException, SAXException, IOException {
 
         // Creer un objet DocumentBuilderFactory
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -46,13 +46,13 @@ public class XML {
             for (int j = 0; j < rowList.getLength(); j++) {
                 Element rowElement = (Element) rowList.item(j);
                 String value = rowElement.getTextContent();
+                value = value.replaceAll("[^\\d.]", ""); // Supprimer tous les caractères non numériques sauf le point décimal
                 double floatValue = Double.parseDouble(value);
                 matrices[i][j][0] = floatValue;
             }
 
         }
         return matrices;
-
-    }  
+    } 
     
 }
