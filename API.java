@@ -25,19 +25,22 @@ public class ReseauNeurone {
     public ResponseEntity<?> predict(@RequestParam("file") File file)  {
         try {
             // Extraire les données du fichier XML
-            XML filexml = new XML(file);
-            double[][][] donnees = filexml.lireFichierXML();
-
+            XML filexml = new XML(new File("C:\\Users\\Houda\\Desktop\\ProjetIRD\\matrices.xml"));
+             double[][][] donnees = filexml.lireFichierXML();
             // Charger le modèle à partir du fichier HDF5 en utilisant la classe KerasModelImport de Deeplearning4j
-            ComputationGraph model = KerasModelImport.importKerasModelAndWeights(cheminFichier);
+            ComputationGraph model = KerasModelImport.importKerasModelAndWeights("C:\\Users\\Houda\\Desktop\\ProjetIRD\\model.h5");
+                // Préparer les tensors d'entrée et de sortie
+                int numDonnees = donnees.length;
+                int numSorties = 2;
+                double[][] predictions = new double[numDonnees][numSorties];
+        
+                for (int i = 0; i < numDonnees; i++) {
+                    INDArray donneesEntrees = Nd4j.create(donnees[i]);
+                    INDArray donneesSorties = model.outputSingle(donneesEntrees);
+                    predictions[i] = donneesSorties.toDoubleVector();
+                }
 
-            // Préparer les tensors d'entrée et de sortie
-            INDArray donneeEntree = Nd4j.create(donnees);
-            INDArray donneeSortie = model.outputSingle(donneeEntree);
-            System.out.println(donneeSortie);
-
-            // Convertir les prédictions en JSON
-            String jsonResult = convertToJson(donneeSortie);
+            String jsonResult = convertToJson(predictions);
 
             return ResponseEntity.ok(jsonResult);
         } catch (Exception e) {
@@ -45,10 +48,10 @@ public class ReseauNeurone {
         }
     }
 
-    private String convertToJson(INDArray predictions) {
+    private String convertToJson(double [][] predictions) {
         // Convertir les prédictions en JSON en utilisant une bibliothèque JSON (par exemple, Gson)
         Gson gson = new Gson();
-        return gson.toJson(predictions.toDoubleMatrix());
+        return gson.toJson(predictions);
     }
 }
 
