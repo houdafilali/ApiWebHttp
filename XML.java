@@ -4,6 +4,7 @@
  */
 package projetird;
 
+
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
@@ -14,24 +15,23 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+
 /**
  *
  * @author Houda
  */
 public class XML {
-    
-    private  final String  cheminFichier;
-    public XML(final String c){
-        cheminFichier=c;
+
+    private final File FichierXML;
+
+    public XML(final File file) {
+        FichierXML= file;
     }
+
     public double[][][] lireFichierXML() throws ParserConfigurationException, SAXException, IOException {
 
-        // Creer un objet DocumentBuilderFactory
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        // Creer un objet DocumentBuilder
-        DocumentBuilder builder = factory.newDocumentBuilder();
         // Charger le fichier XML
-        Document document = builder.parse(new File(cheminFichier));
+        Document document = parseXmlFile(FichierXML);
         // Obtenir les éléments <Matrix>
         NodeList matrixList = document.getElementsByTagName("Matrix");
         int nombreDonnees = matrixList.getLength();
@@ -53,6 +53,15 @@ public class XML {
 
         }
         return matrices;
-    } 
-    
+
+    }
+    private Document parseXmlFile(File file) throws ParserConfigurationException, IOException, SAXException {
+        // Creer un objet DocumentBuilderFactory
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        // Creer un objet DocumentBuilder
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        // Charger le fichier XML
+        return dBuilder.parse(file);
+    }
 }
+
