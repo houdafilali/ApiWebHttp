@@ -4,10 +4,6 @@
  */
 package projetird;
 
-import com.sun.tools.javac.Main;
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -17,12 +13,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author Houda
  */
-public class projetIRD {
-      public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, Exception {
-            // TODO code application logic here
-             SpringApplication.run(Main.class, args);
-            
-           
-          
+@SpringBootApplication
+public class ApiWebHttpApplication {
+
+    public static void main(String[] args)  {
+        SpringApplication.run(ApiWebHttpApplication.class, args);
     }
+
 }
