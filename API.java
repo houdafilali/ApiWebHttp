@@ -19,7 +19,7 @@ import java.io.IOException;
  * @author Houda
  */
 @RestController
-public class ReseauNeurone {
+public class API{
     private static final String cheminFichier = "model.h5";
     private final ObjectMapper objectMapper = new ObjectMapper();
 
