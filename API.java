@@ -20,32 +20,14 @@ import java.io.IOException;
  */
 @RestController
 public class API{
-    private static final String cheminFichier = "model.h5";
+    
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping("/predict")
-    public ResponseEntity<?> predict(@RequestParam("file") File file)  {
+    public ResponseEntity<?> predict(@RequestParam("matrices") MultipartFile matrices )  {
         try {
 
-            XML filexml = new XML(file);
-            //extraire les donneees du fichier XML
-            double[][][] donnees = filexml.lireFichierXML();
-
-            // Load the pre-trained model
-            ClassLoader classLoader = getClass().getClassLoader();
-            File modelFile = new File(classLoader.getResource(cheminFichier).getFile());
-            String MODEL_PATH = modelFile.getAbsolutePath();
-
-            // Vérification de la présence du fichier et du chargement du modèle
-            if (!new File(MODEL_PATH ).exists()) {
-                System.out.println("Le fichier modèle n'a pas été trouvé : " + MODEL_PATH);
-                return null; // ou lancez une exception appropriée
-            }
-
-            // Chargement du modèle
-            ComputationGraph model;
-            try {
-                // Validate the file extension
+            // Validate the file extension
             String filename = matrices.getOriginalFilename();
             if (filename == null || !filename.toLowerCase().endsWith(".xml")) {
                 return ResponseEntity.badRequest().body(null);
