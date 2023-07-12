@@ -45,24 +45,42 @@ public class API{
             // Chargement du modèle
             ComputationGraph model;
             try {
-                model = KerasModelImport.importKerasModelAndWeights(MODEL_PATH,false);
-            } catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
-                System.out.println("Erreur lors du chargement du modèle : " + e.getMessage());
-                e.printStackTrace();
-                return null; // ou lancez une exception appropriée
+                // Validate the file extension
+            String filename = matrices.getOriginalFilename();
+            if (filename == null || !filename.toLowerCase().endsWith(".xml")) {
+                return ResponseEntity.badRequest().body(null);
             }
+
+            // Save the uploaded file
+            File uploadedFile = new File("C:\\Users\\Houda\\IdeaProjects\\ApiWebHttp\\src\\main\\resources\\" + filename);
+            Path filePath = uploadedFile.toPath();
+            Files.copy(matrices.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            XML filexml = new XML(uploadedFile);
+            //extraire les donneees du fichier XML
+           double[][][] donnees = filexml.lireFichierXML();
+            //Load the pre-trained model
+            ClassLoader classLoader = getClass().getClassLoader();
+            File modelFile = new File(classLoader.getResource("model.h5").getFile());
+            String MODEL_PATH = modelFile.getAbsolutePath();
+            // Chargement du modèle
+            ComputationGraph model;
+            try {
+                model = KerasModelImport.importKerasModelAndWeights(MODEL_PATH, false);
+            } catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+                return ResponseEntity.badRequest().body("Erreur lors du chargement du modèle : " + e.getMessage());
+            }
+
 
             // Vérification du modèle chargé
             if (model == null) {
-                System.out.println("Le modèle n'a pas été chargé avec succès.");
-                return null; // ou lancez une exception appropriée
+                return ResponseEntity.badRequest().body("Le modèle n'a pas été chargé avec succès.");
             }
 
             // Préparer les tenseurs d'entrée et de sortie
             int numDonnees = donnees.length;
             if (numDonnees == 0) {
-                System.out.println("Les données d'entrée sont vides.");
-                return null;
+                return ResponseEntity.badRequest().body("Les données d'entrée sont vides.");
             }
             INDArray donneesEntrees = Nd4j.create(donnees);
 
@@ -75,6 +93,7 @@ public class API{
                 INDArray output = donneesSorties[i];
                 predictions[i] = output.toDoubleVector();
             }
+
 
             // Convert predictions to JSON
             String json = objectMapper.writeValueAsString(predictions);
