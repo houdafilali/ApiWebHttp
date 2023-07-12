@@ -11,10 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Houda
  */
 @SpringBootApplication
-public class ApiWebHttpApplication {
+public class projetIRD {
 
     public static void main(String[] args) {
-       SpringApplication.run(ApiWebHttpApplication.class, args);
+       SpringApplication.run(projetIRD.class, args);
     }
 
 }
